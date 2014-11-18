@@ -31,12 +31,19 @@ public class Move : MonoBehaviour {
 		move = false;
 	}
 
+    public void ExternalMove()
+    {
+        move = true;
+    }
+
 	IEnumerator waitAndMove()
 	{
 		while (true) {
 			if( move)
 				Movement.Instance.Move (Direction);
 			yield return new WaitForEndOfFrame();
+
+            //move = false;
 		}
 	}
 }

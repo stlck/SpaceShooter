@@ -5,21 +5,22 @@ using System.Linq;
 
 public class EnemySpawner : MonoBehaviour {
 
-	public List<Transform> Enemies = new List<Transform>();
-	public List<Transform> Bosses = new List<Transform> ();
+    public List<Enemy> Enemies = new List<Enemy>();
+    public List<Enemy> Bosses = new List<Enemy>();
 	public List<AnimationCurve> Patterns = new List<AnimationCurve>();
 	public float SpawnerMoveSpeed = 1;
-	public Dictionary<int,List<Transform>> CurvesEnemies = new Dictionary<int, List<Transform>>();
+    public Dictionary<int, List<Enemy>> CurvesEnemies = new Dictionary<int, List<Enemy>>();
 	public int Target = 2;
 	public float TimeMod = 1f;
 	public int WaveCount = 10;
 
-	int enemyId = 0;
+    //private List<Enemy> toRemove = new List<Transform>();
+    private List<int> toKill = new List<int>();
 
 	void Awake()
 	{
 		for(int p = 0; p < Patterns.Count; p++)
-			CurvesEnemies.Add (p, new List<Transform> ());
+            CurvesEnemies.Add(p, new List<Enemy>());
 	}
 
 	// Use this for initialization
@@ -32,15 +33,8 @@ public class EnemySpawner : MonoBehaviour {
 	void Update () {
 		transform.position += (Vector3.right * -SpawnerMoveSpeed * Time.deltaTime);
 
-		var toRemove = new List<Transform> ();
 		foreach (var l in CurvesEnemies.Values) {
-			foreach (Transform c in l)
-				if (c == null)
-					toRemove.Add (c);
-			foreach (Transform c in toRemove)
-				l.Remove (c);
-
-			toRemove = new List<Transform>();
+            l.RemoveAll(m => m == null);
 		}
 	}
 
@@ -51,13 +45,13 @@ public class EnemySpawner : MonoBehaviour {
 		{
 			if( c != null)
 			{
-				var pattern = Patterns[curve.Key].Evaluate ( Mathf.Abs(c.position.x) / 14);
+				var pattern = Patterns[curve.Key].Evaluate ( Mathf.Abs(c.transform.position.x) / 14);
 				var p =  (Vector2.up * pattern * 6);
-				p.y -= c.position.y;
+				p.y -= c.transform.position.y;
 				//c.Translate(p * Time.deltaTime);
 				c.rigidbody2D.AddForce(p);
-				
-				if( c.position.x <= -15)
+
+                if (c.transform.position.x <= -15)
 					Destroy (c.gameObject);
 			}
 		}
@@ -68,30 +62,31 @@ public class EnemySpawner : MonoBehaviour {
 		StartCoroutine (spawner ());
 	}
 
-	IEnumerator spawn(int pattern, int count, int EnemyIndex, float delay)
+	IEnumerator spawn(int id, int pattern, int count, int EnemyIndex, float delay)
 	{
 		for (int i = 0; i < count; i++) {
-			var at = Instantiate (Enemies[EnemyIndex], Vector3.right * 14 + Vector3.up * 6 * Patterns [pattern].Evaluate (1), Quaternion.identity) as Transform;
-			at.parent = transform;
+			var at = Instantiate (Enemies[EnemyIndex], Vector3.right * 14 + Vector3.up * 6 * Patterns [pattern].Evaluate (1), Quaternion.identity) as Enemy;
+			at.transform.parent = transform;
 			CurvesEnemies [pattern].Add (at);
-			at.GetComponent<Enemy>().Id = enemyId++;
+            at.Id = id + i;
 
 			yield return new WaitForSeconds(delay);
 		}
 	}
 
 	[RPC]
-	public void SpawnEnemy(int pattern, int count, int EnemyIndex, float delay)
+	public void SpawnEnemy(int id, int pattern, int count, int EnemyIndex, float delay)
 	{
-		StartCoroutine(spawn(pattern, count, EnemyIndex, delay));
+		StartCoroutine(spawn(id, pattern, count, EnemyIndex, delay));
 	}
 
 	IEnumerator spawner()
 	{
+        var enemyId = 0;
 		while (true) 
 		{
 			var e = GetEnemy();
-			var enemy = Enemies[e].GetComponent<Enemy>();
+			var enemy = Enemies[e];
 			var enemyCount = Target / enemy.SpawnValue;
 
 			var waves = enemyCount / WaveCount;
@@ -102,24 +97,15 @@ public class EnemySpawner : MonoBehaviour {
                 var count = (int)(enemyCount / waves) + Random.Range(-2, 3);
 				var delay = enemy.HitPoints * TimeMod;
 
-				if(Network.peerType == NetworkPeerType.Server || Network.peerType == NetworkPeerType.Disconnected)
+				if(Network.peerType == NetworkPeerType.Server)
 					networkView.RPC("SpawnEnemy", RPCMode.Others, curveIndex, count, e, delay);
-                StartCoroutine(spawn(curveIndex, count, e, delay));
+                StartCoroutine(spawn(enemyId, curveIndex, count, e, delay));
+
+                enemyId += count;
 
                 yield return new WaitForSeconds(.4f);
                 //yield return new WaitForEndOfFrame();
 			}
-
-			/*
-			do{
-				var curveIndex = Random.Range(0, Patterns.Count-1);
-				var wave = enemyCount > WaveCount ? WaveCount : enemyCount;
-				StartCoroutine(spawn(curveIndex, (int)wave, e, enemy.HitPoints * TimeMod));
-				enemyCount -= wave;
-				yield return new WaitForEndOfFrame();
-			}while(enemyCount > 0);*/
-
-			//SpawnerMoveSpeed = Random.Range(1f,4f);
 
 			Target ++;
 
@@ -134,4 +120,17 @@ public class EnemySpawner : MonoBehaviour {
 	{
 		return Random.Range(0, Enemies.Count);
 	}
+
+    [RPC]
+    public void KillEnemy(int id)
+    {
+        foreach (var l in CurvesEnemies.Values)
+        {
+            l.ForEach(delegate(Enemy e)
+            {
+                if (e.Id == id) 
+                    e.KillMe();
+            });
+        }
+    }
 }

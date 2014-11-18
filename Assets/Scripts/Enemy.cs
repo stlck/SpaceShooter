@@ -30,18 +30,23 @@ public class Enemy : MonoBehaviour {
 		spr.color = Color.Lerp(baseColor, baseColor /2, 1 -( HitPoints / hpBase));
 
 		if (HitPoints <= 0) {
-			if(DeathEffect != null)
-			{
-				var e = Instantiate(DeathEffect, transform.position, DeathEffect.rotation) as Transform;
-				Destroy (e.gameObject, 10);
-			}
-						
-			if(Scoring.Instance != null)
-				Scoring.Instance.AddScore((int)(Points * hpBase), transform.position);
-
-			Death();
+            KillMe();
 		}
 	}
+
+    public void KillMe()
+    {
+        if (DeathEffect != null)
+        {
+            var e = Instantiate(DeathEffect, transform.position, DeathEffect.rotation) as Transform;
+            Destroy(e.gameObject, 10);
+        }
+
+        if (Scoring.Instance != null)
+            Scoring.Instance.AddScore((int)(Points * hpBase), transform.position);
+
+        Death();
+    }
 
 	public virtual void Death()
 	{
