@@ -99,14 +99,15 @@ public class EnemySpawner : MonoBehaviour {
 			for(int i = 0; i < waves; i++)
 			{
 				var curveIndex = Random.Range(0, Patterns.Count-1);
-				var count = (int)(enemyCount/waves);
+                var count = (int)(enemyCount / waves) + Random.Range(-2, 3);
 				var delay = enemy.HitPoints * TimeMod;
 
 				if(Network.peerType == NetworkPeerType.Server || Network.peerType == NetworkPeerType.Disconnected)
 					networkView.RPC("SpawnEnemy", RPCMode.Others, curveIndex, count, e, delay);
                 StartCoroutine(spawn(curveIndex, count, e, delay));
 
-				yield return new WaitForEndOfFrame();
+                yield return new WaitForSeconds(.4f);
+                //yield return new WaitForEndOfFrame();
 			}
 
 			/*

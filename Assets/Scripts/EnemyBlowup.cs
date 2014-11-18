@@ -5,6 +5,7 @@ public class EnemyBlowup : Enemy {
 
 	public float DeathHitRange = 3;
 	public float DeathDamage =.4f;
+
 	public override void Death ()
 	{
 		var coll = Physics2D.OverlapCircleAll(transform.position, DeathHitRange);

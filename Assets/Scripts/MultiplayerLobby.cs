@@ -27,7 +27,7 @@ public class MultiplayerLobby : MonoBehaviour {
 		MasterServer.RequestHostList(NetworkGameName);
 
 		PNAme = PlayerPrefs.GetString ("PName", "My Name");
-		NameField.value = PNAme;
+		NameField.text = PNAme;
 	}
 
 	// Use this for initialization
@@ -70,7 +70,7 @@ public class MultiplayerLobby : MonoBehaviour {
 
 	public void SetPlayerName()
 	{
-		PNAme = NameField.value;
+		PNAme = NameField.text;
 		PlayerPrefs.SetString ("PName", PNAme);
 	}
 

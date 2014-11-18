@@ -56,11 +56,14 @@ public class Manager : MonoBehaviour {
 
 	public static void EndGame()
 	{
+        if (Network.peerType != NetworkPeerType.Disconnected)
+            Network.Disconnect();
+
 		//Score = Scoring.Instance.CurrentScore;
 		if (Instance != null)
-						Instance.StartCoroutine (Instance.waitAndLoad ("Score"));
-				else
-						Application.LoadLevel ("Score");
+			Instance.StartCoroutine (Instance.waitAndLoad ("Score"));
+		else
+			Application.LoadLevel ("Score");
 	}
 	
 	IEnumerator waitAndLoad(string name)

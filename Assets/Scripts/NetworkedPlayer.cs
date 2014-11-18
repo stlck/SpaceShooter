@@ -7,7 +7,10 @@ public class NetworkedPlayer : MonoBehaviour {
 
 	public Transform ChosenShip;
 	public Transform ChosenWeapon;
-	
+
+    private Vector3 shipPos;
+    private Vector3 shipRot;
+
 	public string MyName;
 	public bool IsReady = false;
 	public Color PlayerColor;
@@ -33,7 +36,12 @@ public class NetworkedPlayer : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (PlayerObj == Network.player) {
-			networkView.RPC("UpdateMyShip", RPCMode.Others, ChosenShip.position, ChosenShip.eulerAngles);
+			
+            if(shipPos != ChosenShip.position || shipRot != ChosenShip.eulerAngles)
+                networkView.RPC("UpdateMyShip", RPCMode.Others, ChosenShip.position, ChosenShip.eulerAngles);
+            
+            shipPos = ChosenShip.position;
+            shipRot = ChosenShip.eulerAngles;
 		}
 	}
 
