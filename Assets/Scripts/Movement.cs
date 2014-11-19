@@ -21,14 +21,15 @@ public class Movement : MonoBehaviour {
 		else if (Input.GetKey (KeyCode.S))
 			Move (Vector3.down);
 		
-		if (Input.GetMouseButton (0)) {
+		/*if (Input.GetMouseButton (0)) {
 			var p = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 			if(p.x > 0)
 			{
 				Movement.Instance.Rotate(p);
 				//Weapon.Instance.Fire = true;
 			}
-		}
+		}*/
+
 	}
 
 	public void Move(Vector3 dir)

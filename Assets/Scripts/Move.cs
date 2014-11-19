@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Move : MonoBehaviour {
 
-	public Vector2 Direction;
+    public Vector2 Direction;
 	bool move = false;
 
 	// Use this for initialization
