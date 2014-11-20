@@ -9,9 +9,19 @@ public class Movement : MonoBehaviour {
 	public float RotationSpeed = 5f;
 	public Weapon ShipWeapon;
 
+	public LineRenderer Line;
+	public Gradient LineGrad;
+
+	float angleOffset;
+	Color startColor;
 	void Awake()
 	{
 		Instance = this;
+
+		if (Line == null)
+			Line = GetComponentInChildren<LineRenderer> ();
+
+		
 	}
 	
 	// Update is called once per frame
@@ -29,7 +39,9 @@ public class Movement : MonoBehaviour {
 				//Weapon.Instance.Fire = true;
 			}
 		}*/
-
+		//Line.SetPosition (0, transform.position);
+		//Line.SetPosition (1, transform.right * 10);
+		Line.SetColors (LineGrad.Evaluate (angleOffset / 360), LineGrad.Evaluate (1));
 	}
 
 	public void Move(Vector3 dir)
@@ -42,7 +54,7 @@ public class Movement : MonoBehaviour {
 	public void Rotate(Vector3 target)
 	{
 		var v3Dir = target - transform.position;
-		var angle = Mathf.Atan2(v3Dir.y, v3Dir.x) * Mathf.Rad2Deg;
-		transform.eulerAngles = new Vector3(0,0, Mathf.LerpAngle(transform.eulerAngles.z, angle, Time.deltaTime * RotationSpeed));
+		angleOffset = Mathf.Atan2(v3Dir.y, v3Dir.x) * Mathf.Rad2Deg;
+		transform.eulerAngles = new Vector3(0,0, Mathf.LerpAngle(transform.eulerAngles.z, angleOffset, Time.deltaTime * RotationSpeed));
 	}
 }
