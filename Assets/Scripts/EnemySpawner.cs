@@ -98,7 +98,7 @@ public class EnemySpawner : MonoBehaviour {
 				var delay = enemy.HitPoints * TimeMod;
 
 				if(Network.peerType == NetworkPeerType.Server)
-					networkView.RPC("SpawnEnemy", RPCMode.Others, curveIndex, count, e, delay);
+					networkView.RPC("SpawnEnemy", RPCMode.Others, enemyId, curveIndex, count, e, delay);
                 StartCoroutine(spawn(enemyId, curveIndex, count, e, delay));
 
                 enemyId += count;
