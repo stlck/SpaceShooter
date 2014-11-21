@@ -41,7 +41,9 @@ public class Movement : MonoBehaviour {
 		}*/
 		//Line.SetPosition (0, transform.position);
 		//Line.SetPosition (1, transform.right * 10);
-		Line.SetColors (LineGrad.Evaluate (angleOffset / 360), LineGrad.Evaluate (1));
+		var a = 1 - Mathf.Abs( Mathf.DeltaAngle((angleOffset),(transform.eulerAngles.z)))/RotationSpeed;
+		Debug.Log (a);
+		Line.SetColors (LineGrad.Evaluate ( Mathf.Abs( a)), LineGrad.Evaluate (1));
 	}
 
 	public void Move(Vector3 dir)
