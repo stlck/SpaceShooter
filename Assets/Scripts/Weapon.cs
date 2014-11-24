@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 
 public class Weapon : MonoBehaviour {
@@ -13,15 +14,28 @@ public class Weapon : MonoBehaviour {
 	public bool Fire = false;
 	public float Range = 25;
 	float timer = 0f;
+	float TTL = 0f;
+	int bulletNumber = 0;
+	public List<Bullet> BulletPool = new List<Bullet>();
 
 	// Use this for initialization
 	void Start () {
 		if (Network.peerType == NetworkPeerType.Disconnected) {
 			transform.parent = Movement.Instance.transform;
 			transform.localPosition = Vector3.zero;
-
-			//Instance = this;
 		}
+
+		TTL = 1 + 16 / Bullet.Speed;
+
+		for (int i = 0; i <= (TTL/timeToHit); i++) {
+			var b = Instantiate (Bullet,transform.position + transform.forward, transform.rotation) as Bullet;
+			b.Damage = Damage;
+			b.Owner = this;
+			BulletPool.Add(b);
+
+			b.gameObject.SetActive(false);
+		}
+
 		StartCoroutine (waitAndFire ());
 	}
 	
@@ -36,8 +50,6 @@ public class Weapon : MonoBehaviour {
 			else
 				Fire = false;
 		}
-
-
 	}
 
 	IEnumerator waitAndFire()
@@ -59,7 +71,7 @@ public class Weapon : MonoBehaviour {
 				WeaponSpray.gameObject.SetActive( Fire);
 		}
 	}
-
+/*
 	IEnumerator waitAndDamage(Collider2D target)
 	{
 		RaycastHit2D hit = Physics2D.Raycast (transform.position, transform.right, Range);
@@ -76,7 +88,7 @@ public class Weapon : MonoBehaviour {
 			}
 			yield return new WaitForEndOfFrame();
 		}
-	}
+	}*/
 
 	void UseSpray()
 	{
@@ -91,10 +103,14 @@ public class Weapon : MonoBehaviour {
 	void FireWeapon()
 	{
 		if (Bullet != null) {
-			var b = Instantiate (Bullet, transform.position + transform.forward, transform.rotation) as Bullet;
-			b.Damage = Damage;// * timeToHit;
-			b.Owner = this;
-			Destroy (b.gameObject, b.Speed * Range);
+			var b = BulletPool[bulletNumber++];//Instantiate (Bullet, transform.position + transform.forward, transform.rotation) as Bullet;
+			b.transform.position = transform.position + transform.forward;
+			b.transform.rotation = transform.rotation;
+			b.gameObject.SetActive(true);
+
+
+			if(bulletNumber >= BulletPool.Count)
+				bulletNumber = 0;
 		}
 	}
 }

@@ -68,7 +68,8 @@ public class Bullet : MonoBehaviour {
 					e.StartCoroutine(e.sendDamage( dist, Damage));
 				}
 			}
-			Destroy (gameObject);
+			gameObject.SetActive(false);
+			//Destroy (gameObject);
 		}
 	}
 }
