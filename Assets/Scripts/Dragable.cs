@@ -33,7 +33,7 @@ public class Dragable : MonoBehaviour, IDragHandler, IBeginDragHandler, IEndDrag
     public void OnPointerClick(PointerEventData eventData)
     {
         DragMe(eventData.position);
-        Debug.Log("Point at " + eventData.position);
+        //Debug.Log("Point at " + eventData.position);
     }
 
 

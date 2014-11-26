@@ -17,6 +17,7 @@ public class Weapon : MonoBehaviour {
 	float TTL = 0f;
 	int bulletNumber = 0;
 	public List<Bullet> BulletPool = new List<Bullet>();
+	public AudioSource Sounds;
 
 	// Use this for initialization
 	void Start () {
@@ -24,6 +25,8 @@ public class Weapon : MonoBehaviour {
 			transform.parent = Movement.Instance.transform;
 			transform.localPosition = Vector3.zero;
 		}
+
+		Sounds = gameObject.GetComponent<AudioSource> ();
 
 		TTL = 1 + 16 / Bullet.Speed;
 
@@ -62,9 +65,19 @@ public class Weapon : MonoBehaviour {
 			{
 				timer = 0f;
 				if(Bullet != null)
+				{
 					FireWeapon();
+					Sounds.Play();
+				}
 				else
+				{
 					UseSpray();
+					Sounds.Play();
+				}
+			}
+			else if(!Fire)
+			{
+				Sounds.loop = false;
 			}
 
 			if( Bullet == null)
