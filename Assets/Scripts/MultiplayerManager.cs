@@ -57,7 +57,8 @@ public class MultiplayerManager : MonoBehaviour {
 	{
 		Color c = new Color (val,val + .2f,1f);
 		ReadyToggle.image.color = c;
-		Player.PlayerColor = c;
+        //Player.PlayerColor = c;
+        Player.SetMyColor(new Vector3(c.r, c.g, c.b));
 	}
 
 	void OnPlayerConnected(NetworkPlayer player) {

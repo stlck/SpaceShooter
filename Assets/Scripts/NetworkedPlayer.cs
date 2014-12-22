@@ -71,6 +71,20 @@ public class NetworkedPlayer : MonoBehaviour {
 			MultiplayerManager.Instance.NetworkReadyToggle.isOn = IsReady;		
 	}
 
+    public void SetMyColor(Vector3 color)
+    {
+        this.PlayerColor = new Color(color.x, color.y, color.z);
+
+        if(Network.peerType != NetworkPeerType.Disconnected)
+            networkView.RPC("SendMyColor", RPCMode.Others,color);
+    }
+
+    [RPC]
+    public void SendMyColor(Vector3 color)
+    {
+        this.PlayerColor = new Color(color.x, color.y, color.z);
+    }
+
 	[RPC]
 	public void SendShip(int index)
 	{

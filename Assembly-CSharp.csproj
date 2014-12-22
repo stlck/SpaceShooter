@@ -54,6 +54,7 @@
      <Compile Include="Assets\Scripts\Enemy.cs" />
      <Compile Include="Assets\Scripts\EnemyBlowup.cs" />
      <Compile Include="Assets\Scripts\EnemyBullet.cs" />
+     <Compile Include="Assets\Scripts\EnemyContainer.cs" />
      <Compile Include="Assets\Scripts\EnemyShoot.cs" />
      <Compile Include="Assets\Scripts\EnemySpawner.cs" />
      <Compile Include="Assets\Scripts\JoinScript.cs" />
