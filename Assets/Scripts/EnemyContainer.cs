@@ -29,4 +29,5 @@ public class Wave
     public int count;
     public float spawnInterval;
     public float spawnTime;
+	public bool reversed = false;
 }

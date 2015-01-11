@@ -59,7 +59,7 @@ public class EnemySpawner : MonoBehaviour {
 
 	public void StartSpawn()
 	{
-		StartCoroutine (spawner ());
+		StartCoroutine (spawnerNew ());
 	}
 
 	IEnumerator spawn(int id, int pattern, int count, int EnemyIndex, float delay)
@@ -79,6 +79,35 @@ public class EnemySpawner : MonoBehaviour {
 	{
 		StartCoroutine(spawn(id, pattern, count, EnemyIndex, delay));
 	}
+
+	IEnumerator spawnNew(int id, int pattern, int count, float delay)
+	{
+		for (int i = 0; i < count; i++) {
+			var at = Instantiate (container.Waves[id].enemy, Vector3.right * 14 + Vector3.up * 6 * container.Curves[pattern].Curve.Evaluate (1), Quaternion.identity) as Enemy;
+			at.transform.parent = transform;
+			CurvesEnemies [pattern].Add (at);
+			at.Id = id + i;
+			
+			yield return new WaitForSeconds(delay);
+		}
+	}
+	EnemyContainer container;
+	IEnumerator spawnerNew()
+	{
+		//var cont = Resources.Load<EnemyContainer> ("wave");
+		container = Resources.Load<EnemyContainer>("wave");
+		int curr = 0;
+		while (true) {
+			var wave = container.Waves[curr];
+
+			yield return new WaitForSeconds(wave.spawnTime);
+
+			// fix ints.
+			spawnNew(wave.ID, wave.CurveID, wave.count, wave.spawnInterval);
+
+		}
+	}
+	
 
 	IEnumerator spawner()
 	{

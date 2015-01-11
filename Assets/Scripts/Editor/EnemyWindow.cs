@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 
 public class EnemyWindow : EditorWindow {
@@ -23,29 +25,47 @@ public class EnemyWindow : EditorWindow {
             expandWaves = EditorGUILayout.Foldout(expandWaves, "Waves");
             if(expandWaves)
             {
+				if(GUILayout.Button("+"))
+					_target.Curves.Add(new WaveCurve());
                 foreach(var w in _target.Curves)
                 {
-                    w.ID = EditorGUILayout.IntField(w.ID);
-                    w.Curve = EditorGUILayout.CurveField(w.Curve);
+                	GUILayout.BeginHorizontal();
+                    w.ID = EditorGUILayout.IntField(w.ID, GUILayout.Width(200));
+					w.Curve = EditorGUILayout.CurveField(w.Curve, GUILayout.Width(200));
+                	GUILayout.EndHorizontal();
                 }
             }
-
+			GUILayout.BeginHorizontal();
+			
+			GUILayout.Label("ID", GUILayout.Width(20));
+			//w.curve = EditorGUILayout.CurveField(w.curve) ;
+			GUILayout.Label("enemy");
+			GUILayout.Label("count");
+			GUILayout.Label("interv");
+			GUILayout.Label("spawnt");
+			GUILayout.Label("curve");
+			GUILayout.Label("rev");
+			GUILayout.EndHorizontal();
             foreach(var w in _target.Waves)
             {
                 GUILayout.BeginHorizontal();
 
-                GUILayout.TextField(w.ID.ToString(), 4);
+				w.ID = EditorGUILayout.IntField(w.ID, GUILayout.Width(20));
                 //w.curve = EditorGUILayout.CurveField(w.curve) ;
-                EditorGUILayout.ObjectField(w.enemy, typeof(Enemy));
-                EditorGUILayout.FloatField( w.spawnInterval);
-                EditorGUILayout.FloatField( w.spawnTime);
+				w.enemy = (Enemy)EditorGUILayout.ObjectField(w.enemy, typeof(Enemy));
+				w.count = EditorGUILayout.IntField(w.count);
+                w.spawnInterval = EditorGUILayout.FloatField( w.spawnInterval);
+                w.spawnTime = EditorGUILayout.FloatField( w.spawnTime);
+				w.CurveID = EditorGUILayout.IntPopup(w.CurveID, _target.Curves.Select (m => m.ID.ToString()).ToArray(),_target.Curves.Select (m => m.ID).ToArray());
+				w.reversed = EditorGUILayout.Toggle(w.reversed);                       
+
                 GUILayout.EndHorizontal();
             }
 
         }
         else
         {
-            _target = AssetDatabase.LoadAssetAtPath("Assets/wave.asset", typeof(EnemyContainer)) as EnemyContainer; //Selection.activeObject as EnemyContainer;
+            _target = AssetDatabase.LoadAssetAtPath("Assets/Resources/wave.asset", typeof(EnemyContainer)) as EnemyContainer; //Selection.activeObject as EnemyContainer;
         }
 
         /*if(GUILayout.Button("Ny container"))

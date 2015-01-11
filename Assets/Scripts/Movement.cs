@@ -42,7 +42,7 @@ public class Movement : MonoBehaviour {
 		//Line.SetPosition (0, transform.position);
 		//Line.SetPosition (1, transform.right * 10);
 		var a = 1 - Mathf.Abs( Mathf.DeltaAngle((angleOffset),(transform.eulerAngles.z)))/RotationSpeed;
-		Debug.Log (a);
+//		Debug.Log (a);
 		Line.SetColors (LineGrad.Evaluate ( Mathf.Abs( a)), LineGrad.Evaluate (1));
 	}
 
